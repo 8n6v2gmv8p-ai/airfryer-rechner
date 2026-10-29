@@ -2,13 +2,14 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Airfryer Rechner</title>
   
   <!-- PWA & iOS Meta Tags -->
   <meta name="theme-color" content="#121212">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- black-translucent sorgt dafür, dass die App unter der Statusleiste liegt und den ganzen Screen ausnutzt -->
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Airfryer">
   
@@ -28,29 +29,57 @@
         --border: #333333;
     }
 
+    /* Auf mobilen Displays füllt der Body den kompletten Bildschirm */
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        overflow-x: hidden;
+    }
+
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background-color: var(--bg-color);
         color: var(--text-main);
         display: flex;
         justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-        padding: 20px;
+        align-items: flex-start; /* Startet ganz oben, um Platz auszunutzen */
         box-sizing: border-box;
         overscroll-behavior-y: none;
     }
 
+    /* Die Hauptbox nimmt auf Mobilgeräten 100% der Breite & Höhe ein und fängt unter der Safe Area an */
     .container {
         background-color: var(--container-bg);
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         width: 100%;
-        max-width: 450px;
-        border: 1px solid var(--border);
+        min-height: 100vh;
+        min-height: -webkit-fill-available; /* Wichtig für iOS, um die Safari-Leisten-Höhe auszugleichen */
+        padding: 24px;
+        /* Safe Areas für iPhones mit Notch oder Dynamic Island */
+        padding-top: calc(24px + env(safe-area-inset-top));
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        padding-left: calc(24px + env(safe-area-inset-left));
+        padding-right: calc(24px + env(safe-area-inset-right));
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Auf Desktop-Monitoren oder Tablets bleibt das kompakte Kasten-Design */
+    @media (min-width: 480px) {
+        body {
+            align-items: center; /* Zentriert die Box auf großen Bildschirmen wieder */
+            padding: 20px;
+        }
+        .container {
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            max-width: 450px;
+            min-height: auto;
+            border: 1px solid var(--border);
+            padding: 30px;
+        }
     }
 
     /* Header mit Logo */
@@ -63,10 +92,9 @@
     }
 
     .app-logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
     }
 
     h2 {
@@ -86,7 +114,7 @@
 
     .toggle-buttons button {
       flex: 1;
-      padding: 10px;
+      padding: 12px; /* Etwas größer für bessere mobile Erreichbarkeit */
       border: none;
       background: transparent;
       border-radius: 8px;
@@ -126,7 +154,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
 
     label {
@@ -158,17 +186,18 @@
 
     input[type=range]::-webkit-slider-thumb {
         -webkit-appearance: none;
-        height: 24px;
-        width: 24px;
+        height: 28px; /* Etwas vergrößert für iPhone-Daumen */
+        width: 28px;
         border-radius: 50%;
         background: var(--accent);
         cursor: pointer;
-        margin-top: -10px;
+        margin-top: -12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
 
     input[type=range]::-webkit-slider-runnable-track {
         width: 100%;
-        height: 4px;
+        height: 5px;
         cursor: pointer;
         background: var(--border);
         border-radius: 2px;
@@ -179,7 +208,7 @@
       border: 1px solid var(--border);
       padding: 24px;
       border-radius: 12px;
-      margin-top: 10px;
+      margin-top: auto; /* Schiebt die Card nach unten, wenn Platz da ist, oder lässt sie fließen */
     }
 
     .subtitle {
@@ -211,7 +240,7 @@
     }
 
     .stat-label {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       display: flex;
       align-items: center;
@@ -225,7 +254,7 @@
     }
 
     .stat-value {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
       color: var(--text-main);
       display: flex;
@@ -234,7 +263,7 @@
     }
 
     .stat-value span {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 500;
       color: var(--text-muted);
     }
